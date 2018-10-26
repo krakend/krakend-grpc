@@ -1,0 +1,72 @@
+{
+    "version": 2,
+    "name": "My lovely gateway",
+    "port": 8000,
+    "cache_ttl": "3600s",
+    "timeout": "3s",
+    "disable_rest": true,
+    "plugin":{
+      "folder": "./plugins",
+      "pattern": ".so"
+    },
+    "endpoints": [
+    {
+      "endpoint": "/nick/{nick}",
+      "backend": [
+        {
+          "host": [ "https://api.github.com" ],
+          "url_pattern": "/users/{nick}",
+          "whitelist": [
+            "avatar_url",
+            "name",
+            "company",
+            "blog",
+            "location",
+            "mail",
+            "hireable",
+            "followers",
+            "public_repos",
+            "public_gists"
+          ],
+          "mapping": { "blog": "website" },
+          "group": "github"
+        },
+        {
+          "host": [ "https://api.bitbucket.org" ],
+          "url_pattern": "/2.0/users/{nick}",
+          "whitelist": [
+            "links.avatar",
+            "display_name",
+            "website",
+            "location"
+          ],
+          "mapping": { "display_name": "name" },
+          "group": "bitbucket"
+        }
+      ]
+    },
+    {
+        "endpoint": "/combination/{id}/{name}",
+        "backend": [
+            {
+                "host": [ "https://jsonplaceholder.typicode.com" ],
+                "url_pattern": "/posts?userId={id}",
+                "is_collection": true,
+                "mapping": { "collection": "posts" }
+            },
+            {
+                "host": [ "https://jsonplaceholder.typicode.com" ],
+                "url_pattern": "/users/{id}",
+                "mapping": { "email": "personal_email" }
+            },
+            {
+                "host": [ "localhost:50051" ],
+                "disable_host_sanitize": true,
+                "url_pattern": "helloworld.Greeter",
+                "method": "SayHello",
+                "encoding": "grpc-helloworld.Greeter.SayHello"
+            }
+        ]
+    }
+    ]
+}
