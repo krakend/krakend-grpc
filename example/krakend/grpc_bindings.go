@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"io"
 
-	pb "github.com/kpacha/krakend-grpc/example/pb"
+	pb "github.com/devopsfaith/krakend-grpc/example/pb"
 )
 
 const (

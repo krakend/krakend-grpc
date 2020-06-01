@@ -23,7 +23,7 @@ With your bindings already defined, just execute the Register
 Build and start the example
 
 	$ go build -o krakend ./example/krakend
-	$ ./krakend -c krakend.json -d -l DEBUG 
+	$ ./krakend -c ./example/krakend/krakend.json -d -l DEBUG 
 
 ### As a plugin (dynamic linked bin)
 
@@ -51,5 +51,5 @@ Add a `plugin` section into the service config file with the path to the folder 
 Build and start the example
 
 	$ go build -o krakend ./example/krakend
-	$ ./krakend -c krakend.json -d -l DEBUG -plugin
+	$ ./krakend -c ./example/krakend/krakend.json -d -l DEBUG -plugin
 	[KRAKEND] DEBUG: gRPC: total loaded plugins = 0

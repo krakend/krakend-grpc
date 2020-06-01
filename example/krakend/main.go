@@ -8,12 +8,13 @@ import (
 	"os/signal"
 	"syscall"
 
+	grpc "github.com/devopsfaith/krakend-grpc"
+	"github.com/devopsfaith/krakend-grpc/plugin"
 	"github.com/devopsfaith/krakend/config"
 	"github.com/devopsfaith/krakend/logging"
 	"github.com/devopsfaith/krakend/proxy"
 	"github.com/devopsfaith/krakend/router/gin"
-	grpc "github.com/kpacha/krakend-grpc"
-	"github.com/kpacha/krakend-grpc/plugin"
+	"github.com/devopsfaith/krakend/transport/http/client"
 )
 
 func main() {
@@ -50,14 +51,14 @@ func main() {
 		logger.Debug("gRPC: total loaded plugins =", tot)
 	}
 
-	// backend proxy wrapper
-	bf := grpc.NewGRPCProxy(logger, proxy.CustomHTTPProxyFactory(proxy.NewHTTPClient))
+	ctx, cancel := context.WithCancel(context.Background())
 
+	// backend proxy wrapper
+	bf := grpc.NewGRPCProxy(logger, proxy.HTTPProxyFactory(client.NewHTTPClient(ctx)))
 	routerFactory := gin.DefaultFactory(proxy.NewDefaultFactory(bf, logger), logger)
 
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
-	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	go func() {
